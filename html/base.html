@@ -110,14 +110,11 @@
             if(false){  // Always true to simulate all requests for demo purposes
                 // Prevent the actual network request (which would fail on file:// protocol)
                 evt.preventDefault();
-                
                 // Extract service ID from the element's ID (or another reliable attribute)
                 const serviceId = evt.detail.elt.id;
-
                 // Simulate network delay
                 setTimeout(() => {
                     const content = getServiceContent(serviceId);
-                    
                     // Manually trigger the success state by dispatching a custom event
                     // This tells HTMX to treat this as a successful response with the content
                     htmx.trigger(evt.detail.target, 'htmx:afterSettle', {
