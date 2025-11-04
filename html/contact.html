@@ -1,0 +1,140 @@
+
+    <main>
+    <style>
+        /* Custom Styling for the professional look */
+        body { font-family: 'Inter', sans-serif; background-color: #0c1a36; color: #e2e8f0; } /* Deep Dark Blue Background */
+        .asa-dark-blue { background-color: #0c1a36; }
+        .asa-primary-blue { background-color: #1a417e; } /* Rich Blue for sections */
+        .asa-gold { color: #ffd700; } /* Gold accent color */
+        .asa-gold-bg { background-color: #ffd700; }
+        .asa-light-text { color: #f8fafc; }
+        input[type="text"]:focus, input[type="email"]:focus, select:focus, textarea:focus {
+            border-color: #ffd700 !important;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5) !important;
+            outline: none;
+        }
+    </style>        <!-- Hero Section: Contact Banner -->
+        <section class="asa-primary-blue py-24 border-b border-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <p class="text-lg uppercase font-semibold asa-gold mb-3">24/7 Global Maritime Support</p>
+                <h2 class="text-6xl sm:text-7xl font-extrabold text-white mb-6 leading-tight">
+                    Get A <span class="asa-gold">Logistics Quote</span>
+                </h2>
+                <p class="text-xl max-w-4xl mx-auto text-gray-300">
+                    Your shipment deserves the most efficient and reliable route across East Africa and beyond. Fill out the form below, and our experts will craft a personalized solution for you.
+                </p>
+            </div>
+        </section>
+
+        <!-- Main Content: Form and Contact Info -->
+        <section class="py-20 md:py-32">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 gap-16">
+                
+                <!-- Quote Request Form Container -->
+                <div class="lg:col-span-2">
+                    <h3 class="text-4xl font-extrabold text-white mb-8 border-b-2 border-gray-700 pb-3" id="quote-form">
+                        Request a Personalized Quote
+                    </h3>
+                    
+                    <!-- HTMX Target for Form/Success Message -->
+                    <div id="form-container">
+                        <form hx-post="/quote_request" 
+                              hx-target="#form-container" 
+                              hx-swap="outerHTML" 
+                              class="space-y-6 p-8 rounded-3xl shadow-2xl bg-asa-primary-blue border-t-2 border-asa-gold">
+                    {% csrf_token %}
+
+                            <p class="text-sm text-gray-300">Fields marked with <span class="text-red-400">*</span> are required.</p>
+                            
+                            <!-- Full Name and Email -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="full_name" class="block text-sm font-medium asa-light-text mb-2">Full Name <span class="text-red-400">*</span></label>
+                                    <input type="text" id="full_name" name="full_name" required 
+                                           class="mt-1 block w-full rounded-lg bg-gray-700 text-white border-gray-600 shadow-md p-3 border">
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium asa-light-text mb-2">Email Address <span class="text-red-400">*</span></label>
+                                    <input type="email" id="email" name="email" required 
+                                           class="mt-1 block w-full rounded-lg bg-gray-700 text-white border-gray-600 shadow-md p-3 border">
+                                </div>
+                            </div>
+
+                            <!-- Phone and Service Interest -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium asa-light-text mb-2">Phone Number</label>
+                                    <input type="text" id="phone" name="phone" 
+                                           class="mt-1 block w-full rounded-lg bg-gray-700 text-white border-gray-600 shadow-md p-3 border" placeholder="+255...">
+                                </div>
+                                <div>
+                                    <label for="service_interest" class="block text-sm font-medium asa-light-text mb-2">Service Required <span class="text-red-400">*</span></label>
+                                    <select id="service_interest" name="service_interest" required 
+                                            class="mt-1 block w-full rounded-lg bg-gray-700 text-white border-gray-600 shadow-md p-3 border appearance-none">
+                                        <option value="" disabled selected class="text-gray-400">Select a Core Service...</option>
+                                        <option value="port-agency">Port Agency & Husbandry</option>
+                                        <option value="logistics">Logistics & Cargo Solutions</option>
+                                        <option value="broking">Ship Broking & Consulting</option>
+                                        <option value="crew">Crew Management & Manning</option>
+                                        <option value="general">General Inquiry</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Details Textarea -->
+                            <div>
+                                <label for="details" class="block text-sm font-medium asa-light-text mb-2">Cargo/Vessel Details & Route <span class="text-red-400">*</span></label>
+                                <textarea id="details" name="details" rows="5" required 
+                                          class="mt-1 block w-full rounded-lg bg-gray-700 text-white border-gray-600 shadow-md p-3 border" 
+                                          placeholder="Describe your requirement: e.g., 20 containers FCL from Shanghai to Mombasa, bulk cement cargo, or vessel ETA/ETD details."></textarea>
+                            </div>
+
+                            <button type="submit" 
+                                    class="w-full asa-gold-bg text-gray-900 font-bold py-4 px-6 rounded-full text-xl shadow-2xl transition duration-300 transform hover:scale-[1.01] hover:bg-yellow-400 focus:outline-none focus:ring-4 focus:ring-asa-gold focus:ring-opacity-70">
+                                Submit Quote Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Office Contact Information -->
+                <div class="lg:col-span-1 space-y-10">
+                    
+                    <h3 class="text-4xl font-extrabold text-white mb-8 border-b-2 border-gray-700 pb-3">
+                        Direct Contact
+                    </h3>
+
+                    <!-- Kenya Office -->
+                    <div class="p-8 rounded-2xl shadow-2xl bg-asa-primary-blue border-t-2 border-asa-gold">
+                        <h4 class="text-2xl font-extrabold asa-gold mb-4 flex items-center">
+                            <span class="mr-3">🇰🇪</span> ASA Head Office (Kenya)
+                        </h4>
+                        <address class="space-y-3 not-italic text-gray-300">
+                            <p class="font-semibold text-white">Mombasa Trade Centre (Ambalal)</p>
+                            <p>4th Floor, Nkurumah Rd, MOMBASA KENYA.</p>
+                            <p>P.O BOX: 86315 - 80100</p>
+                            <p>📞 <span class="font-bold text-white">Fixed Lines:</span> +254 41 2227100/ 222 7101</p>
+                            <p>📱 <span class="font-bold text-white">Mobile:</span> +254 797 411 737 / 737 411 737</p>
+                            <p>📧 <span class="font-bold text-white">General:</span> <a href="mailto:info@asakenya.com" class="asa-gold hover:text-yellow-400">info@asakenya.com</a></p>
+                        </address>
+                    </div>
+
+                    <!-- Tanzania Office -->
+                    <div class="p-8 rounded-2xl shadow-2xl bg-asa-primary-blue border-t-2 border-gray-400">
+                        <h4 class="text-2xl font-extrabold text-white mb-4 flex items-center">
+                            <span class="mr-3">🇹🇿</span> AMS Office (Tanzania)
+                        </h4>
+                        <address class="space-y-3 not-italic text-gray-300">
+                            <p class="font-semibold text-white">Access Maritime Services (AMS)</p>
+                            <p>Dar es Salaam, Tanzania (Location details via inquiry)</p>
+                            <p>📞 <span class="font-bold text-white">Phone 1:</span> +255 628 489 440</p>
+                            <p>📞 <span class="font-bold text-white">Phone 2:</span> +255 659 175 658</p>
+                            <p>📧 <span class="font-bold text-white">General:</span> <a href="mailto:info@accessmaritimetz.com" class="asa-gold hover:text-yellow-400">info@accessmaritimetz.com</a></p>
+                        </address>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>

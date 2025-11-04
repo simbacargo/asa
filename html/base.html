@@ -1,0 +1,415 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Shipping Agency (ASA) - Shipping Excellence in East Africa</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10" integrity=""></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb; /* Light background for contrast */
+        }
+        /* Custom blue accent color based on common shipping company branding */
+        .asa-blue { background-color: #0d47a1; } /* Dark Blue */
+        .asa-blue-text { color: #0d47a1; }
+        .asa-blue-light { background-color: #1976d2; } /* Medium Blue */
+
+        /* Ensures the loading indicator is hidden by default */
+        .htmx-indicator { opacity: 0; transition: opacity 300ms ease-in; }
+        .htmx-request .htmx-indicator { opacity: 1; }
+        .htmx-request.htmx-indicator { opacity: 1; }
+
+        /* Custom shadow text effect for the hero title */
+        .shadow-text-lg {
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HTMX Placeholder Scripts (Mock Server Response) -->
+    <script>
+        // Placeholder function to simulate server response for different tabs
+        function getServiceContent(serviceId) {
+            let content = '';
+            let details = '';
+
+            switch(serviceId) {
+                case 'port-agency':
+                    details = 'Full Vessel Agency, Owners\' Protective Agents, Cargo Agents, Supervisory Agents, Charterers Agents, and Liner Agencies. We offer 24/7 support for all your vessel\'s needs, ensuring fast turnaround times.';
+                    content = `
+                        <ul class="list-disc ml-6 space-y-3 text-gray-700 font-medium">
+                            <li><span class="asa-blue-text font-bold">Crew Handling:</span> 24/7 Crew Changes & Spare Parts Logistics</li>
+                            <li><span class="asa-blue-text font-bold">Supply Chain:</span> Provisioning, Freshwater, and Bunkers Supply</li>
+                            <li><span class="asa-blue-text font-bold">Vessel Coverage:</span> Tankers, Bulk Carriers, Liners, Cruise Ships, Navy Vessels.</li>
+                        </ul>
+                    `;
+                    break;
+                case 'logistics':
+                    details = 'Seamless supply chain solutions from customs clearance to distribution. We handle FCL, LCL, break bulk, bulk, and project cargo across East Africa.';
+                    content = `
+                        <div class="space-y-4">
+                            <h4 class="text-xl font-extrabold asa-blue-text">Logistics Modalities:</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div class="p-4 bg-gray-100 rounded-xl shadow-md text-center font-semibold text-gray-800 border-b-4 border-yellow-500">Road & Rail Transport</div>
+                                <div class="p-4 bg-gray-100 rounded-xl shadow-md text-center font-semibold text-gray-800 border-b-4 border-yellow-500">Air Freight & Charters</div>
+                                <div class="p-4 bg-gray-100 rounded-xl shadow-md text-center font-semibold text-gray-800 border-b-4 border-yellow-500">Secure Bonded Warehousing</div>
+                                <div class="p-4 bg-gray-100 rounded-xl shadow-md text-center font-semibold text-gray-800 border-b-4 border-yellow-500">Customs Clearance Expertise</div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'broking':
+                    details = 'Expert ship broking, chartering (focused on time charter projects), and comprehensive consulting services covering maritime, financial, and supply chain strategies.';
+                    content = `
+                        <div class="p-4 bg-blue-50 border-t-2 border-asa-blue rounded-xl text-gray-800">
+                            <p class="font-bold text-lg mb-2">Maritime Advisory:</p>
+                            <ul class="list-disc ml-6 space-y-1">
+                                <li>Cargo Forecasting & Market Feasibility Studies</li>
+                                <li>Vessel Inspection, Repairs, and Quality Assurance</li>
+                                <li>Customs Law & Procedures Consultancy in East Africa</li>
+                            </ul>
+                        </div>
+                    `;
+                    break;
+                case 'crew':
+                    details = 'Providing highly trained, hardworking East African seafarers. Our services include screening, training, document control, medical checks, and full crew change planning.';
+                    content = `
+                        <div class="p-6 bg-yellow-50 border-t-2 border-yellow-500 rounded-xl text-yellow-800">
+                            <p class="font-bold text-xl mb-1">Seafarer Excellence:</p>
+                            <p>We source and manage professional seafarers, assisting with all immigration, customs, and transportation logistics for crew changes, ensuring full compliance.</p>
+                        </div>
+                    `;
+                    break;
+                default:
+                    details = 'Select a service above to see detailed information.';
+                    content = '<p class="text-gray-500 italic">No content selected.</p>';
+            }
+
+            // Return the dynamically generated content (which is the actual HTML to be swapped)
+            return `
+                <div class="p-6 bg-white rounded-2xl shadow-2xl transition-all duration-300 transform scale-100">
+                    <p class="text-xl font-semibold text-gray-700 mb-6">${details}</p>
+                    ${content}
+                </div>
+            `;
+        }
+
+        // HTMX Interceptor to handle the mock API call for the service tabs
+        document.body.addEventListener('htmx:beforeRequest', function(evt) {
+            const path = evt.detail.path;
+            
+            // Check if the request is for one of the mocked service endpoints
+            if (path.startsWith('mock_api/')) {
+                // Prevent the actual network request (which would fail on file:// protocol)
+                evt.preventDefault();
+                
+                // Extract service ID from the element's ID (or another reliable attribute)
+                const serviceId = evt.detail.elt.id;
+
+                // Simulate network delay
+                setTimeout(() => {
+                    const content = getServiceContent(serviceId);
+                    
+                    // Manually trigger the success state by dispatching a custom event
+                    // This tells HTMX to treat this as a successful response with the content
+                    htmx.trigger(evt.detail.target, 'htmx:afterSettle', {
+                        xhr: {
+                            responseText: content // Provide the content HTMX expects
+                        }
+                    });
+                }, 300); // 300ms delay
+            }
+            // If the path is not a mock_api, let HTMX attempt the actual request
+        });
+
+        // Set initial content on load and highlight the first tab
+        window.onload = function() {
+            const initialContent = getServiceContent('port-agency');
+            document.getElementById('service-detail-container').innerHTML = initialContent;
+            
+            // Highlight the initial active tab
+            document.getElementById('port-agency').classList.add('bg-white', 'asa-blue-text', 'shadow-lg');
+            document.getElementById('port-agency').classList.remove('text-white', 'hover:bg-asa-blue-light');
+        }
+
+        // Custom logic to handle tab highlighting (since HTMX only swaps the content, not the tab class)
+        document.body.addEventListener('click', function(evt) {
+            // Check if the clicked element is one of the service tabs
+            if (evt.target.hasAttribute('hx-target') && evt.target.getAttribute('hx-target') === '#service-detail-container') {
+                // Remove active class from all tabs
+                document.querySelectorAll('[hx-target="#service-detail-container"]').forEach(tab => {
+                    tab.classList.remove('bg-white', 'asa-blue-text', 'shadow-lg');
+                    tab.classList.add('text-white', 'hover:bg-asa-blue-light');
+                });
+                // Add active class to the clicked tab
+                evt.target.classList.add('bg-white', 'asa-blue-text', 'shadow-lg');
+                evt.target.classList.remove('text-white', 'hover:bg-asa-blue-light');
+            }
+        });
+    </script>
+    <!-- END HTMX Placeholder Scripts -->
+
+    <!-- Navigation Bar -->
+    <header class="asa-blue text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-2xl font-extrabold asa-gold">
+                        ASA Logistics
+                    </a>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <!-- FIX: Removed HTMX and made this an internal scroll link -->
+                    <a href="#" hx-get="about" hx-target="main" class="hover:text-yellow-300 transition duration-150">About Us</a>
+                    <a href="#services" hx-get="services" hx-target="main"  class="hover:text-yellow-300 transition duration-150">Services</a>
+                    <a href="#regional-reach" hx-get="regional_reach" hx-target="main"  class="hover:text-yellow-300 transition duration-150">Regional Reach</a>
+                    <a href="#contact" hx-get="contact" hx-target="main"  class="hover:text-yellow-300 transition duration-150">Contact</a>
+                </nav>
+                <a href="#" class="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full font-bold hover:bg-yellow-500 transition duration-300 shadow-md hidden sm:block">
+                    Request a Quote
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="relative bg-gray-900 text-white overflow-hidden">
+            <div class="absolute inset-0 overflow-hidden">
+                <!-- Video Background for Hero (Muted, Looping, Autoplay) -->
+                <video id="hero-video" autoplay muted loop playsinline 
+                    poster="https://placehold.co/1920x800/222222/cccccc?text=Shipping+Excellence+East+Africa"
+                    class="w-full h-full object-cover opacity-70 transition-opacity duration-1000">
+                    <!-- Placeholder video sources as actual video files cannot be provided -->
+                    <source src="{% static '63dd11cc0c58c71581ffa3bf_hero_video_2-transcode.mp4' %}" type="video/mp4" onerror="this.parentElement.style.display='none';">
+                    <!-- Fallback image if video cannot load -->
+                    <img src="https://placehold.co/1920x800/222222/cccccc?text=Shipping+Excellence+East+Africa"
+                         alt="Container ship arriving at a busy port at sunset"
+                         class="w-full h-full object-cover">
+                </video>
+                <!-- Dark Overlay for Contrast -->
+                <div class="absolute inset-0 bg-gray-900 opacity-60"></div>
+            </div>
+            
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 sm:py-40 lg:py-48 text-center">
+                <div class="space-y-6">
+                    <p class="text-xl font-semibold text-yellow-400 tracking-wider uppercase shadow-text-lg">Access Shipping Agency Ltd</p>
+                    <h2 class="text-6xl sm:text-8xl font-extrabold leading-tight shadow-text-lg">
+                        Shipping Excellence with <span class="text-yellow-400">Regional Power</span>
+                    </h2>
+                    <p class="mt-4 text-2xl text-gray-300 max-w-3xl mx-auto shadow-text-lg">
+                        Your reliable logistics backbone across East Africa, prioritizing <b>Total Quality Management</b> and cost-effective solutions since 2011.
+                    </p>
+                    <div class="mt-12 flex justify-center space-x-4">
+                        <a href="#services" class="asa-blue-light text-white font-bold py-4 px-10 rounded-full text-lg shadow-2xl hover:bg-asa-blue transition duration-300 transform hover:scale-105">
+                            Explore Services
+                        </a>
+                        <a href="#regional-reach" class="bg-transparent border-2 border-white text-white font-bold py-4 px-10 rounded-full text-lg shadow-2xl hover:bg-white hover:text-gray-900 transition duration-300 transform hover:scale-105">
+                            Our Regional Reach
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Values/Mission Section (Target for 'About Us' Link) -->
+        <section id="mission" class="py-20 md:py-32 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h3 class="text-base asa-blue-text font-semibold tracking-wide uppercase">Our Foundation</h3>
+                    <h2 class="mt-2 text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+                        Commitment to Integrity, Innovation, and Service
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Value 1 -->
+                    <div class="text-center p-8 rounded-xl shadow-xl transition duration-300 border-t-2 border-yellow-500 bg-gray-50 hover:bg-yellow-50 transform hover:-translate-y-1">
+                        <p class="text-4xl asa-blue-text mb-4">⚓</p>
+                        <h4 class="text-xl font-bold mb-2">Customer Focus</h4>
+                        <p class="text-gray-600">Active engagement to deeply understand and fulfill all stakeholder requirements.</p>
+                    </div>
+                    <!-- Value 2 -->
+                    <div class="text-center p-8 rounded-xl shadow-xl transition duration-300 border-t-2 border-asa-blue bg-gray-50 hover:bg-blue-50 transform hover:-translate-y-1">
+                        <p class="text-4xl asa-blue-text mb-4">⚙️</p>
+                        <h4 class="text-xl font-bold mb-2">Innovation & Reliability</h4>
+                        <p class="text-gray-600">Creating reliable and cutting-edge solutions that consistently exceed expectations.</p>
+                    </div>
+                    <!-- Value 3 -->
+                    <div class="text-center p-8 rounded-xl shadow-xl transition duration-300 border-t-2 border-yellow-500 bg-gray-50 hover:bg-yellow-50 transform hover:-translate-y-1">
+                        <p class="text-4xl asa-blue-text mb-4">💰</p>
+                        <h4 class="text-xl font-bold mb-2">Cost-Effective</h4>
+                        <p class="text-gray-600">Optimizing resource utilization to provide value without compromising quality.</p>
+                    </div>
+                    <!-- Value 4 -->
+                    <div class="text-center p-8 rounded-xl shadow-xl transition duration-300 border-t-2 border-asa-blue bg-gray-50 hover:bg-blue-50 transform hover:-translate-y-1">
+                        <p class="text-4xl asa-blue-text mb-4">⏱️</p>
+                        <h4 class="text-xl font-bold mb-2">Timely Execution</h4>
+                        <p class="text-gray-600">Prioritizing on-time delivery and adherence to budgets for efficient project execution.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section (HTMX Integration) -->
+        <section id="services" class="py-20 md:py-32 asa-blue-light bg-opacity-95">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 text-white">
+                    <h3 class="text-base font-semibold tracking-wide uppercase text-yellow-300">Our Comprehensive Offerings</h3>
+                    <h2 class="mt-2 text-4xl font-extrabold tracking-tight sm:text-5xl">
+                        Integrated Shipping & Logistics Solutions
+                    </h2>
+                </div>
+
+                <!-- HTMX Tabs -->
+                <div class="flex flex-wrap justify-center space-x-0 sm:space-x-4 mb-8 asa-blue p-3 rounded-2xl shadow-2xl">
+
+                    <!-- Tab 1: Port Agency -->
+                    <button id="port-agency"
+                        class="text-white font-bold py-4 px-8 rounded-xl transition duration-300 m-1 text-sm sm:text-base w-full sm:w-auto
+                                hover:bg-asa-blue-light focus:outline-none focus:ring-4 focus:ring-yellow-500/50"
+                        hx-get="/VesselAgency"
+                        hx-target="#service-detail-container"
+                        hx-swap="innerHTML"
+                        hx-trigger="click"
+                        hx-indicator="#service-loading-indicator">
+                        🚢 Port Agency & Husbandry
+                    </button>
+
+                    <!-- Tab 2: Logistics -->
+                    <button id="logistics"
+                        class="text-white font-bold py-4 px-8 rounded-xl transition duration-300 m-1 text-sm sm:text-base w-full sm:w-auto
+                                hover:bg-asa-blue-light focus:outline-none focus:ring-4 focus:ring-yellow-500/50"
+                        hx-get="mock_api/logistics"
+                        hx-target="#service-detail-container"
+                        hx-swap="innerHTML"
+                        hx-trigger="click"
+                        hx-indicator="#service-loading-indicator">
+                        📦 Logistics & Cargo Solutions
+                    </button>
+
+                    <!-- Tab 3: Ship Broking -->
+                    <button id="broking"
+                        class="text-white font-bold py-4 px-8 rounded-xl transition duration-300 m-1 text-sm sm:text-base w-full sm:w-auto
+                                hover:bg-asa-blue-light focus:outline-none focus:ring-4 focus:ring-yellow-500/50"
+                        hx-get="mock_api/broking"
+                        hx-target="#service-detail-container"
+                        hx-swap="innerHTML"
+                        hx-trigger="click"
+                        hx-indicator="#service-loading-indicator">
+                        🔗 Ship Broking & Consulting
+                    </button>
+
+                    <!-- Tab 4: Crew Management -->
+                    <button id="crew"
+                        class="text-white font-bold py-4 px-8 rounded-xl transition duration-300 m-1 text-sm sm:text-base w-full sm:w-auto
+                                hover:bg-asa-blue-light focus:outline-none focus:ring-4 focus:ring-yellow-500/50"
+                        hx-get="regional_reach"
+                        hx-target="#service-detail-container"
+                        hx-swap="innerHTML"
+                        hx-trigger="click"
+                        hx-indicator="#service-loading-indicator">
+                        🧑‍✈️ Crew Management Services
+                    </button>
+                </div>
+
+                <!-- HTMX Loading Indicator -->
+                <div class="text-center mb-6 h-8">
+                    <div id="service-loading-indicator" class="htmx-indicator asa-blue-text font-bold text-lg">
+                        <span class="animate-pulse">Loading Service Details...</span>
+                    </div>
+                </div>
+
+                <!-- HTMX Content Target -->
+                <div id="service-detail-container" class="min-h-[250px] flex items-center justify-center">
+                    <!-- Initial content populated by the window.onload script -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action / Regional Reach -->
+        <section id="regional-reach" class="py-20 md:py-32 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
+                    Operating Across the East African Corridor
+                </h2>
+                <p class="mt-6 text-xl text-gray-700 max-w-4xl mx-auto">
+                    From Mombasa to Dar es Salaam, and into the landlocked nations of Uganda, Rwanda, Burundi, DRC, and Southern Sudan, <b>ASA is your dedicated partner on the ground.</b> We ensure seamless, customs-compliant movement of cargo throughout the region.
+                </p>
+                <div class="mt-12 flex justify-center">
+                    <!-- Placeholder Map Image/Icon -->
+                    <img src="https://placehold.co/800x400/e0f2f1/1976d2?text=Map+of+East+African+Ports+and+Trade+Routes"
+                         alt="Map illustrating regional reach"
+                         class="rounded-xl shadow-2xl max-w-full h-auto border-4 border-asa-blue-light">
+                </div>
+                <div class="mt-12">
+                    <a href="#" class="bg-yellow-500 text-gray-900 font-bold py-4 px-10 rounded-full text-xl shadow-xl hover:bg-yellow-600 transition duration-300 transform hover:scale-105">
+                        Inquire About a Route Today
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer id="contact" class="asa-blue text-white pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+
+                <!-- Company Info -->
+                <div>
+                    <h4 class="text-xl font-bold mb-4 text-yellow-300">Access Shipping Agency Ltd</h4>
+                    <p class="text-sm">
+                        MOMBASA TRADE CENTRE, (Ambalal)<br>
+                        4th FLOOR, Nkurumah Rd<br>
+                        P.O BOX: 86315 - 80100, MOMBASA KENYA.
+                    </p>
+                </div>
+
+                <!-- Contact Kenya -->
+                <div>
+                    <h4 class="text-xl font-bold mb-4 text-yellow-300">Contact Kenya (ASA)</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li>📞 <b>Fixed Lines:</b> +254 41 2227100/ 222 7101</li>
+                        <li>📱 <b>Mobile:</b> +254 797 411 737</li>
+                        <li>📧 <b>Email:</b> info@asakenya.com</li>
+                    </ul>
+                </div>
+
+                <!-- Contact Tanzania -->
+                <div>
+                    <h4 class="text-xl font-bold mb-4 text-yellow-300">Contact Tanzania (AMS)</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li>📞 <b>Phone 1:</b> +255 628 489 440</li>
+                        <li>📞 <b>Phone 2:</b> +255 659 175 658</li>
+                        <li>📧 <b>Email:</b> info@accessmaritimetz.com</li>
+                    </ul>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-xl font-bold mb-4 text-yellow-300">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#mission" class="hover:text-yellow-300">Our Mission & Vision</a></li>
+                        <li><a href="#" class="hover:text-yellow-300">Affiliations (BIMCO)</a></li>
+                        <li><a href="#" class="hover:text-yellow-300">Careers</a></li>
+                        <li><a href="#" class="hover:text-yellow-300">Terms & Privacy</a></li>
+                    </ul>
+                </div>
+
+            </div>
+            <div class="mt-12 border-t border-gray-700 pt-8 text-center text-sm">
+                &copy; 2024 Access Shipping Agency Ltd. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
