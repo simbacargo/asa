@@ -86,7 +86,7 @@ def quote_request_view(request):
                 Request Submitted Successfully, {full_name.split()[0]}!
             </p>
             <p class="text-lg text-gray-700">
-                Thank you for reaching out to Access Shipping Agency. We have received your detailed quote request and a dedicated logistics specialist will contact you directly within 24 hours.
+                Thank you for reaching out to Access Maritime Service. We have received your detailed quote request and a dedicated logistics specialist will contact you directly within 24 hours.
             </p>
         </div>
     """
