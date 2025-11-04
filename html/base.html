@@ -106,7 +106,8 @@
             const path = evt.detail.path;
             
             // Check if the request is for one of the mocked service endpoints
-            if (path.startsWith('mock_api/')) {
+            // if (path.startsWith('mock_api/')) {
+            if(false){  // Always true to simulate all requests for demo purposes
                 // Prevent the actual network request (which would fail on file:// protocol)
                 evt.preventDefault();
                 
