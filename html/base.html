@@ -155,28 +155,82 @@
     <!-- END HTMX Placeholder Scripts -->
 
     <!-- Navigation Bar -->
-    <header class="asa-blue text-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="/" class="text-xl font-extrabold asa-gold">
-                        Access Maritime Service
-                    </a>
-                </div>
-                <nav class="hidden md:flex space-x-8">
-                    <!-- FIX: Removed HTMX and made this an internal scroll link -->
-                    <a href="#" hx-get="about" hx-target="main" class="hover:text-yellow-300 transition duration-150">About Us</a>
-                    <a href="#services" hx-get="services" hx-target="main"  class="hover:text-yellow-300 transition duration-150">Services</a>
-                    <a href="#regional-reach" hx-get="regional_reach" hx-target="main"  class="hover:text-yellow-300 transition duration-150">Regional Reach</a>
-                    <a href="#contact" hx-get="contact" hx-target="main"  class="hover:text-yellow-300 transition duration-150">Contact</a>
-                </nav>
-                <a href="#" class="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full font-bold hover:bg-yellow-500 transition duration-300 shadow-md hidden sm:block">
-                    Request a Quote
-                </a>
-            </div>
-        </div>
-    </header>
+ <header class="asa-blue text-white shadow-lg sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a href="/" class="text-xl font-extrabold asa-gold">
+          Access Maritime Service
+        </a>
+      </div>
 
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex space-x-8">
+        <a hx-get="about" hx-target="main" href="#" class="hover:text-yellow-300 transition duration-150">About Us</a>
+        <a hx-get="services" hx-target="main" href="#" class="hover:text-yellow-300 transition duration-150">Services</a>
+        <a hx-get="regional_reach" hx-target="main" href="#" class="hover:text-yellow-300 transition duration-150">Regional Reach</a>
+        <a hx-get="contact" hx-target="main" href="#" class="hover:text-yellow-300 transition duration-150">Contact</a>
+      </nav>
+
+      <!-- Quote button (hidden on small screens) -->
+      <a
+        href="#"
+        class="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full font-bold hover:bg-yellow-500 transition duration-300 shadow-md hidden sm:block"
+      >
+        Request a Quote
+      </a>
+
+      <!-- Mobile Menu Button -->
+      <button
+        id="menu-toggle"
+        class="md:hidden flex items-center text-yellow-400 focus:outline-none"
+      >
+        <!-- Hamburger icon -->
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          ></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation (hidden by default) -->
+  <nav
+    id="mobile-menu"
+    class="md:hidden hidden flex-col space-y-2 bg-asa-blue text-white px-6 pb-4"
+  >
+    <a hx-get="about" hx-target="main" href="#" class="block hover:text-yellow-300 transition duration-150">About Us</a>
+    <a hx-get="services" hx-target="main" href="#" class="block hover:text-yellow-300 transition duration-150">Services</a>
+    <a hx-get="regional_reach" hx-target="main" href="#" class="block hover:text-yellow-300 transition duration-150">Regional Reach</a>
+    <a hx-get="contact" hx-target="main" href="#" class="block hover:text-yellow-300 transition duration-150">Contact</a>
+    <a
+      href="#"
+      class="block bg-yellow-400 text-gray-900 text-center px-4 py-2 rounded-full font-bold hover:bg-yellow-500 transition duration-300 shadow-md"
+    >
+      Request a Quote
+    </a>
+  </nav>
+</header>
+    <script>
+      // Mobile menu toggle functionality
+      document
+        .getElementById("menu-toggle")
+        .addEventListener("click", function () {
+          const menu = document.getElementById("mobile-menu");
+          menu.classList.toggle("hidden");
+        });
+    </script>
     <main>
         <!-- Hero Section -->
         <section class="relative bg-gray-900 text-white overflow-hidden">
@@ -358,7 +412,7 @@
 
     <!-- Footer -->
     <footer id="contact" class="asa-blue text-white pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
 
                 <!-- Company Info -->
@@ -403,10 +457,10 @@
                 <div>
                     <h4 class="text-xl font-bold mb-4 text-yellow-300">Quick Links</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#mission" class="hover:text-yellow-300">Our Mission & Vision</a></li>
-                        <li><a href="#" class="hover:text-yellow-300">Affiliations (BIMCO)</a></li>
-                        <li><a href="#" class="hover:text-yellow-300">Careers</a></li>
-                        <li><a href="#" class="hover:text-yellow-300">Terms & Privacy</a></li>
+                        <li><a href="#mission" hx-get="{% url 'about' %}" class="hover:text-yellow-300">Our Mission & Vision</a></li>
+                        <li><a href="#Affiliations" class="hover:text-yellow-300">Affiliations (BIMCO)</a></li>
+                        <!-- <li><a href="#" class="hover:text-yellow-300">Careers</a></li> -->
+                        <li><a href="#TOS" class="hover:text-yellow-300">Terms & Privacy</a></li>
                     </ul>
                 </div>
 
